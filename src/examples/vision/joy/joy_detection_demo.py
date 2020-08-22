@@ -46,7 +46,7 @@ JOY_SCORE_HIGH = 0.85
 JOY_SCORE_LOW = 0.10
 
 JOY_SOUND = ('C5q', 'E5q', 'C6q')
-SAD_SOUND = ('C6q', 'E5q', 'C5q')
+SAD_SOUND = ('C6q', 'E5q', 'C5q', 'C6q', 'E5q', 'C5q', 'C6q', 'E5q', 'C5q', 'C6q', 'E5q', 'C5q')
 MODEL_LOAD_SOUND = ('C6w', 'c6w', 'C6w')
 BEEP_SOUND = ('E6q', 'C6q')
 
@@ -288,7 +288,8 @@ def joy_detector(num_frames, preview_alpha, image_format, image_folder,
         # https://picamera.readthedocs.io/en/release-1.13/fov.html#sensor-modes
         # This is the resolution inference run on.
         # Use half of that for video streaming (820x616).
-        camera = stack.enter_context(PiCamera(sensor_mode=4, resolution=(820, 616)))
+        #M camera = stack.enter_context(PiCamera(sensor_mode=4, resolution=(820, 616)))
+        camera = stack.enter_context(PiCamera(sensor_mode=4, resolution=(640, 480)))
         stack.enter_context(PrivacyLed(leds))
 
         server = None
@@ -321,9 +322,11 @@ def joy_detector(num_frames, preview_alpha, image_format, image_folder,
             event = joy_threshold_detector.send(joy_score)
             if event == 'high':
                 logger.info('High joy detected.')
-                player.play(JOY_SOUND)
+                photographer.shoot(camera)
+                #Marcel player.play(JOY_SOUND)
             elif event == 'low':
                 logger.info('Low joy detected.')
+                photographer.shoot(camera)
                 player.play(SAD_SOUND)
 
             if server:
