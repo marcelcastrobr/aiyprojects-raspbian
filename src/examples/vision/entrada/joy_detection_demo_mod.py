@@ -327,7 +327,7 @@ def joy_detector(num_frames, preview_alpha, image_format, image_folder,
             elif event == 'low':
                 logger.info('Low joy detected.')
                 photographer.shoot(camera)
-                #Marcel player.play(SAD_SOUND)
+                player.play(SAD_SOUND)
 
             if server:
                 server.send_overlay(svg_overlay(faces, frame_size, joy_score))
