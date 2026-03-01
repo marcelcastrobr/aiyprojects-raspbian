@@ -129,6 +129,11 @@ Set GPU memory to 128MB:
 echo "gpu_mem=128" | sudo tee -a /boot/config.txt
 ```
 
+Make sure to *not* use GPIO6 for SPI0 (required since 5.4 kernel):
+```bash
+echo "dtoverlay=spi0-1cs,cs0_pin=7" | sudo tee -a /boot/config.txt
+```
+
 Reboot:
 
 ```bash
@@ -154,8 +159,13 @@ ssh pi@raspberrypi.local "raspivid --nopreview --timeout 0 -o -" | ffplay -logle
 
 #### Install Voice Bonnet/HAT packages
 
-Install the bonnet/HAT drivers:
+Voice HAT does not require any driver installation. You only need to load
+device tree overlay on boot:
+```bash
+echo "dtoverlay=googlevoicehat-soundcard" | sudo tee -a /boot/config.txt
+```
 
+Voice Bonnet requires driver installation:
 ```bash
 sudo apt-get install -y aiy-voicebonnet-soundcard-dkms
 ```
@@ -174,8 +184,14 @@ sudo mkdir -p /etc/pulse/daemon.conf.d/
 echo "default-sample-rate = 48000" | sudo tee /etc/pulse/daemon.conf.d/aiy.conf
 ```
 
+You may also need to disable `module-suspend-on-idle` PulseAudio module for the
+Voice HAT:
+```bash
+sudo sed -i -e "s/^load-module module-suspend-on-idle/#load-module module-suspend-on-idle/" /etc/pulse/default.pa
+```
+
 If you want to use Google Assistant, install the Raspberry-Pi-compatible
-`google-assistant-library` python library:
+`google-assistant-library` python library from `aiy-python-wheels` package:
 
 ```bash
 sudo apt-get install -y aiy-python-wheels
